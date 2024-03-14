@@ -51,27 +51,27 @@ class ConfigManager:
         self.config_file = config_file
         self.config = self.load_config()
 
-    def get_debug_level(self):
-        # Get the debugging level from the config file.
-        level = self.config.get('debug_level', 'ERROR').upper()
-        # Options: DEBUG, INFO, WARNING, ERROR, CRITICAL
-        return getattr(logging, level, logging.ERROR)
-    
     def load_config(self):
         try:
             with open(self.config_file, 'r') as file:
-                return json.load(file)
+                content = file.read()
+                if not content:
+                    return self.create_default_config()
+                return json.loads(content)
         except FileNotFoundError:
-            default_config = {
-                "username": "",
-                "password": "",
-                "pdf_enabled": False,
-                "debug_level": "ERROR",  # Options: DEBUG, INFO, WARNING, ERROR, CRITICAL
-                "log_retention_days": 7
-            }
-            self.config = default_config
-            self.save_config()
-            return default_config
+            return self.create_default_config()
+
+    def create_default_config(self):
+        default_config = {
+            "username": "",
+            "password": "",
+            "pdf_enabled": False,
+            "debug_level": "ERROR",
+            "log_retention_days": 7
+        }
+        self.config = default_config
+        self.save_config()
+        return default_config
 
     def save_config(self):
         with open(self.config_file, 'w') as file:
@@ -79,7 +79,7 @@ class ConfigManager:
 
     def get_credentials(self):
         if 'username' in self.config and 'password' in self.config:
-            print("🔑 Found existing login credentials in the config file.")
+            logger.info("🔑 Found existing login credentials in the config file.")
             use_existing = input(f"Would you like to use the existing credentials ({self.config['username']})? (y/n): ").lower()
             if use_existing == 'y':
                 return self.config['username'], self.config['password']
@@ -89,10 +89,16 @@ class ConfigManager:
         self.save_config()
         return username, password
 
+    def get_debug_level(self):
+        level = self.config.get('debug_level', 'ERROR').upper()
+        return getattr(logging, level, logging.ERROR)
+
+    def is_pdf_enabled(self):
+        return self.config.get('pdf_enabled', False)
+
     def get_log_retention_days(self):
-        """Get the log retention time in days from the config file."""
-        return self.config.get('log_retention_days', 7)  # Default to 7 days
-    
+        return self.config.get('log_retention_days', 7)
+
 def display_statistics(stats_filepath, likes_counter):
     print("\n🎉 Completed Run 🎉")
     print(f"Statistics file created: {stats_filepath}")
@@ -121,15 +127,17 @@ def tally_likes(directory):
         if filename.endswith('.txt'):
             with open(os.path.join(directory, filename), 'r') as file:
                 lines = file.readlines()
-                post_date = lines[2].split(': ')[1].strip()
+                post_date = ""
+                if len(lines) > 2 and ': ' in lines[2]:
+                    post_date = lines[2].split(': ')[1].strip()
                 likers_section = False
                 for line in lines:
                     if likers_section:
                         username = line.strip()
                         likes_counter[username] += 1
-                        if post_date < user_dates[username]['first_seen']:
+                        if post_date and post_date < user_dates[username]['first_seen']:
                             user_dates[username]['first_seen'] = post_date
-                        if post_date > user_dates[username]['last_seen']:
+                        if post_date and post_date > user_dates[username]['last_seen']:
                             user_dates[username]['last_seen'] = post_date
                     if line.strip() == 'Likers:':
                         likers_section = True
@@ -290,5 +298,6 @@ def main():
 
     display_statistics(stats_filepath, likes_counter)
     logger.info(f"🎉 Last run: {last_run}")
+    
 if __name__ == '__main__':
     main()

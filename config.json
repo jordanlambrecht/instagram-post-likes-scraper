@@ -1,1 +1,7 @@
-{ "username": "jordanlambrecht", "password": "fifty!part6BENIN" }
+{
+  "username": "",
+  "password": "",
+  "pdf_enabled": true,
+  "debug_level": "ERROR",
+  "log_retention_days": 7
+}
