@@ -1,15 +1,33 @@
-# Instagram Post Likes Scraper 📊
+# Instagram Post Likes Scraper
 
-## Overview 📝
+## 📝 Overview
 
 This script allows you to scrape Instagram posts from a specified account and generate statistics about the likes each post has received. It provides insights into your top likers and overall engagement on your posts.
 
-## Requirements 🛠️
+## 🛠️ Requirements
 
-- Python 3.6 or higher
-- A virtual environment (recommended)
+- annotated-types
+- certifi
+- charset-normalizer
+- idna
+- instagrapi
+- instaloader
+- pillow
+- pycryptodomex
+- pydantic
+- pydantic_core
+- PySocks
+- requests
+- tqdm
+- typing_extensions
+- urllib3
+- fpdf
 
-## Instagram API Changes
+## ⚠️ Disclaimer
+
+Using this script excessively might lead to your Instagram account being banned. Use it responsibly and at your own risk.
+
+## 🥴 Instagram API Changes
 
 Instagram recently changes their API, resulting in the following error being displayed durring runtime:
 
@@ -24,7 +42,7 @@ ERROR:public_request:Status 201: JSONDecodeError in public_request (url=https://
 
 The script will continue running regardless. Someone smarter than me has to fix this one though because it's way above my paygrade. If you know how to resolve it, please create a pull request.
 
-## Installation 💻
+## 💻 Installation
 
 1. Clone the repository:
    ```
@@ -52,7 +70,7 @@ The script will continue running regardless. Someone smarter than me has to fix 
    pip install -r requirements.txt
    ```
 
-## Usage 🚀
+## 🚀 Usage
 
 Run the script:
 
@@ -62,22 +80,18 @@ python main.py
 
 Follow the prompts to enter your Instagram credentials and the account you wish to scrape.
 
-## Configuration ⚙️
+## ⚙️ Configuration
 
 You can configure the script's behavior through the `config.json` file, where you can set your Instagram credentials and enable or disable PDF generation.
 
-## Output 📂
+## 📂 Output
 
 The script generates an `output` directory containing:
 
 - A `Posts` directory with text files for each post.
 - A `Statistics` directory with CSV and optional PDF files containing likes statistics.
 
-## Disclaimer ⚠️
-
-Using this script excessively might lead to your Instagram account being banned. Use it responsibly and at your own risk.
-
-### Setting Up the Environment
+## 🔨 Setting Up the Environment
 
 1.  **Clone the repository:**
 
